@@ -1,0 +1,8 @@
+[package]
+name = "chipeight"
+version = "0.1.0"
+edition = "2021"
+description = "chip-8 emulator written in rust"
+license = "MIT"
+
+[dependencies]
