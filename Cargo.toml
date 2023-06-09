@@ -6,3 +6,4 @@ description = "chip-8 emulator written in rust"
 license = "MIT"
 
 [dependencies]
+sdl2 = "0.35.2"
