@@ -1,8 +1,11 @@
-use std::time::Duration;
-
-use sdl2::{event::Event, keyboard::Keycode, video::Window, Sdl, VideoSubsystem};
+use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
+use sdl2::{EventPump, Sdl, VideoSubsystem};
 
 fn main() {
+    init();
+}
+
+fn init() {
     let sdl_context: Sdl = match sdl2::init() {
         Ok(sdl_context) => sdl_context,
         Err(_) => panic!("failed to initialise sdl context"),
@@ -19,19 +22,20 @@ fn main() {
         .build()
         .expect("failed to initialise window");
 
-    let mut event_pump = match sdl_context.event_pump() {
+    let event_pump: EventPump = match sdl_context.event_pump() {
         Ok(event_pump) => event_pump,
         Err(_) => panic!("failed to initialise event pump"),
     };
 
-    let mut canvas = match window.into_canvas().build() {
+    let canvas: Canvas<Window> = match window.into_canvas().build() {
         Ok(canvas) => canvas,
         Err(_) => panic!("failed to create canvas"),
     };
 
-    canvas.clear();
-    canvas.present();
+    main_loop(event_pump, canvas);
+}
 
+fn main_loop(mut event_pump: EventPump, mut canvas: Canvas<Window>) {
     loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -43,6 +47,7 @@ fn main() {
                 _ => {}
             }
         }
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        canvas.clear();
+        canvas.present();
     }
 }
