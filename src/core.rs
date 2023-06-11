@@ -1,5 +1,7 @@
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
 use sdl2::{EventPump, Sdl, VideoSubsystem};
+use std::thread::sleep;
+use std::time::Duration;
 
 const WIDTH: u16 = 1024;
 const HEIGHT: u16 = 512;
@@ -31,22 +33,26 @@ pub fn init() {
         Err(_) => panic!("failed to create canvas"),
     };
 
+    // todo: load rom
     main_loop(event_pump, canvas);
 }
 
 fn main_loop(mut event_pump: EventPump, mut canvas: Canvas<Window>) {
-    loop {
+    'running: loop {
+        // todo: emulator cycle
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit { .. } => panic!("bruh moment"),
+                Event::Quit { .. } => break 'running,
                 Event::KeyDown {
                     keycode: Some(Keycode::Escape),
                     ..
-                } => panic!("bruh moment"),
+                } => break 'running,
                 _ => {}
             }
         }
         canvas.clear();
+        // todo: build texture
         canvas.present();
+        sleep(Duration::new(0, 16 * 1000 * 1000));
     }
 }
