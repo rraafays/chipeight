@@ -1,6 +1,9 @@
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
 use sdl2::{EventPump, Sdl, VideoSubsystem};
 
+const WIDTH: u16 = 1024;
+const HEIGHT: u16 = 512;
+
 fn main() {
     init();
 }
@@ -17,7 +20,7 @@ fn init() {
     };
 
     let window: Window = video_subsystem
-        .window("test", 600, 800)
+        .window("test", WIDTH.into(), HEIGHT.into())
         .position_centered()
         .build()
         .expect("failed to initialise window");
