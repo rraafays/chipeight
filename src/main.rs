@@ -1,34 +1,48 @@
-use sdl2::pixels::Color;
-use sdl2::rect::Rect;
-use sdl2::render::Canvas;
-use sdl2::video::Window;
-use sdl2::{Sdl, VideoSubsystem};
+use std::time::Duration;
+
+use sdl2::{event::Event, keyboard::Keycode, video::Window, Sdl, VideoSubsystem};
 
 fn main() {
-    init();
-    deinit();
-}
-
-fn init() {
-    let sdl: Sdl = match sdl2::init() {
-        Ok(it) => it,
-        Err(err) => panic!(),
-    };
-    let video: VideoSubsystem = match sdl.video() {
-        Ok(it) => it,
-        Err(err) => panic!(),
+    let sdl_context: Sdl = match sdl2::init() {
+        Ok(sdl_context) => sdl_context,
+        Err(_) => panic!("failed to initialise sdl context"),
     };
 
-    let window: Window = video
-        .window("test", 100, 100)
+    let video_subsystem: VideoSubsystem = match sdl_context.video() {
+        Ok(video_subsystem) => video_subsystem,
+        Err(_) => panic!("failed to initialise video subsystem"),
+    };
+
+    let window: Window = video_subsystem
+        .window("test", 600, 800)
         .position_centered()
         .build()
-        .unwrap();
+        .expect("failed to initialise window");
 
-    let mut canvas: Canvas<Window> = window.into_canvas().present_vsync().build().unwrap();
+    let mut event_pump = match sdl_context.event_pump() {
+        Ok(event_pump) => event_pump,
+        Err(_) => panic!("failed to initialise event pump"),
+    };
 
-    canvas.set_draw_color(Color::RGB(0, 0, 0));
+    let mut canvas = match window.into_canvas().build() {
+        Ok(canvas) => canvas,
+        Err(_) => panic!("failed to create canvas"),
+    };
+
+    canvas.clear();
     canvas.present();
-}
 
-fn deinit() {}
+    loop {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. } => panic!("bruh moment"),
+                Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => panic!("bruh moment"),
+                _ => {}
+            }
+        }
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+    }
+}
