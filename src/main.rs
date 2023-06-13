@@ -1,4 +1,3 @@
-mod chip8;
 mod core;
 mod utils;
 
