@@ -1,4 +1,4 @@
-use crate::utils::cpu::CPU;
+use crate::utils;
 
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
 use sdl2::{EventPump, Sdl, VideoSubsystem};
@@ -35,14 +35,14 @@ pub fn init() {
         Err(_) => panic!("failed to create canvas"),
     };
 
-    let cpu = CPU {
+    let mut cpu = utils::CPU {
         opcode: 0,
         memory: [0; 4096],
         graphics: [0; 2048],
 
         register: [0; 16],
         index_register: 0,
-        program_counter: 0,
+        program_counter: 0x200,
 
         delay_timer: 0,
         sound_timer: 0,
@@ -52,6 +52,11 @@ pub fn init() {
 
         keys: [0; 16],
     };
+
+    for (index, byte) in utils::FONTSET.iter().enumerate() {
+        cpu.memory[index] = *byte;
+        println!("{index} = {byte}");
+    }
 
     // todo: load rom
     main_loop(event_pump, canvas);
