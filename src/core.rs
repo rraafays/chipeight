@@ -104,11 +104,15 @@ impl CPU {
             // 0x5XY0 -> skip next instruction if Vx == Vy
             0x5 => {
                 let x = (self.opcode & 0x0F00) >> 8;
-                let y = (self.opcode & 0x00F0) >> 8;
+                let y = (self.opcode & 0x00F0) >> 4;
                 if self.register[x as usize] == self.register[y as usize] {
                     self.increment_program_counter();
                 }
+                self.increment_program_counter();
             }
+
+            // 0x6XKK -> set Vx = kk
+            0x6 => {}
         }
     }
 
