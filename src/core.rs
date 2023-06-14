@@ -35,28 +35,7 @@ pub fn init() {
         Err(_) => panic!("failed to create canvas"),
     };
 
-    let mut cpu = utils::CPU {
-        opcode: 0,
-        memory: [0; 4096],
-        graphics: [0; 2048],
-
-        register: [0; 16],
-        index_register: 0,
-        program_counter: 0x200,
-
-        delay_timer: 0,
-        sound_timer: 0,
-
-        stack: [0; 16],
-        stack_pointer: 0,
-
-        keys: [0; 16],
-    };
-
-    for (index, byte) in utils::FONTSET.iter().enumerate() {
-        cpu.memory[index] = *byte;
-        println!("{index} = {byte}");
-    }
+    let cpu = utils::init_cpu();
 
     // todo: load rom
     main_loop(event_pump, canvas);
