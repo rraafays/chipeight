@@ -20,6 +20,7 @@ pub const FONTSET: [u8; 80] = [ //u8,
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
+#[derive(Debug, Copy, Clone)]
 pub struct CPU {
     pub opcode: u16,
     pub memory: [u8; 4096],

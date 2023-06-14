@@ -54,13 +54,39 @@ impl CPU {
         return cpu;
     }
 
+    pub fn cycle(mut self) {
+        self.opcode = (self.memory[self.program_counter as usize] << 8) as u16
+            | (self.memory[self.program_counter as usize + 1]) as u16;
+
+        let first_nibble = &self.opcode >> 12;
+
+        match first_nibble {
+            // 0x00E0 -> clear display/graphics
+            // 0x00EE -> return from subroutine
+            0x0 => {
+                if self.opcode == 0x00E0 {
+                    self.graphics = [0; 2048];
+                } else if self.opcode == 0x00EE {
+                }
+                self.increment_program_counter();
+            }
+            // 0x1NNN -> jump to location NNN
+            0x1 => self.program_counter = self.opcode & 0x0FFF,
+            // 0x2NNN -> call subroutine at NNN
+            0x2 => {
+                self.stack[self.stack_pointer as usize] = self.program_counter;
+                self.increment_stack_pointer();
+                self.program_counter = self.opcode & 0x0FFF
+            }
+            _ => {}
+        }
+    }
+
     pub fn increment_program_counter(mut self) {
         self.program_counter += 2; // every instruction is 2 bytes
     }
 
-    pub fn cycle(mut self) {
-        self.opcode = (self.memory[self.program_counter as usize] << 8) as u16
-            | (self.memory[self.program_counter as usize + 1]) as u16;
-        let first_nibble = self.opcode >> 12;
+    pub fn increment_stack_pointer(mut self) {
+        self.stack_pointer += 1;
     }
 }
