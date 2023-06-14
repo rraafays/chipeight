@@ -67,18 +67,48 @@ impl CPU {
                 if self.opcode == 0x00E0 {
                     self.graphics = [0; 2048];
                 } else if self.opcode == 0x00EE {
+                    self.stack_pointer -= 1;
+                    self.program_counter = self.stack[self.stack_pointer as usize];
                 }
                 self.increment_program_counter();
             }
+
             // 0x1NNN -> jump to location NNN
             0x1 => self.program_counter = self.opcode & 0x0FFF,
+
             // 0x2NNN -> call subroutine at NNN
             0x2 => {
                 self.stack[self.stack_pointer as usize] = self.program_counter;
                 self.increment_stack_pointer();
                 self.program_counter = self.opcode & 0x0FFF
             }
-            _ => {}
+
+            // 0x3XKK -> skip next instruction if Vx == kk
+            0x3 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                if self.register[x as usize] == self.opcode as u8 & 0x00FF {
+                    self.increment_program_counter();
+                }
+                self.increment_program_counter();
+            }
+
+            // 0x4XKK -> skip next instruction if Vx != kk
+            0x4 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                if self.register[x as usize] != self.opcode as u8 & 0x00FF {
+                    self.increment_program_counter();
+                }
+                self.increment_program_counter();
+            }
+
+            // 0x5XY0 -> skip next instruction if Vx == Vy
+            0x5 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                let y = (self.opcode & 0x00F0) >> 8;
+                if self.register[x as usize] == self.register[y as usize] {
+                    self.increment_program_counter();
+                }
+            }
         }
     }
 
