@@ -38,7 +38,7 @@ pub fn init() {
         Err(_) => panic!("failed to create canvas"),
     };
 
-    let mut cpu = core::CPU::init();
+    let mut cpu = utils::CPU::init();
 
     // todo: load rom
     core::main_loop(event_pump, canvas);

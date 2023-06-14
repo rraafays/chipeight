@@ -19,3 +19,21 @@ pub const FONTSET: [u8; 80] = [ //u8,
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
+
+pub struct CPU {
+    pub opcode: u16,
+    pub memory: [u8; 4096],
+    pub graphics: [u8; 64 * 32],
+
+    pub register: [u8; 16],
+    pub index_register: u16,
+    pub program_counter: u16,
+
+    pub delay_timer: u8,
+    pub sound_timer: u8,
+
+    pub stack: [u16; 16],
+    pub stack_pointer: u16,
+
+    pub keys: [u8; 16],
+}
