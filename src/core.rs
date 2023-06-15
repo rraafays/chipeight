@@ -112,7 +112,51 @@ impl CPU {
             }
 
             // 0x6XKK -> set Vx = kk
-            0x6 => {}
+            0x6 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                self.register[x as usize] = (self.opcode & 0x00FF) as u8;
+                self.increment_program_counter();
+            }
+
+            // 0x7XKK -> set Vx = Vx + kk
+            0x7 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                self.register[x as usize] += (self.opcode & 0x00FF) as u8;
+                self.increment_program_counter();
+            }
+
+            // 0x8XY0 -> set Vx = Vy
+            // 0x8XY1 -> set Vx = Vx | Vy
+            // 0x8XY2 -> set Vx = Vx & Vy
+            // 0x8XY3 -> set Vx = Vx ^ Vy
+            // 0x8XY4 -> set Vx = Vx + Vy (carry)
+            // 0x8XY5 -> set Vx = Vx - Vy (not borrow)
+            // 0x8XY6 -> set Vx = Vx SHR 1
+            // 0x8XY7 -> set Vx = Vy - Vx (not borrow)
+            // 0x8XYE -> set Vx = Vx SHL 1
+            0x8 => {
+                let x = (self.opcode & 0x0F00) >> 8;
+                let y = (self.opcode & 0x00F0) >> 4;
+                let operation = self.opcode & 0x000F;
+
+                match operation {
+                    0 => self.register[x as usize] = self.register[y as usize],
+                    1 => self.register[x as usize] |= self.register[y as usize],
+                    2 => self.register[x as usize] &= self.register[y as usize],
+                    3 => self.register[x as usize] ^= self.register[y as usize],
+
+                    4 => {
+                        let mut sum: u16 = self.register[x as usize] as u16;
+                        sum += self.register[y as usize] as u16;
+                        self.register[0xF] = if sum > 255 { 1 } else { 0 };
+                        self.register[x as usize] = (sum & 0x00FF) as u8;
+                    }
+
+                    5 => {}
+                }
+
+                self.increment_program_counter();
+            }
         }
     }
 
