@@ -72,17 +72,14 @@ impl CPU {
                 }
                 self.increment_program_counter();
             }
-
             // 0x1NNN -> jump to location NNN
             0x1 => self.program_counter = self.opcode & 0x0FFF,
-
             // 0x2NNN -> call subroutine at NNN
             0x2 => {
                 self.stack[self.stack_pointer as usize] = self.program_counter;
                 self.increment_stack_pointer();
                 self.program_counter = self.opcode & 0x0FFF
             }
-
             // 0x3XKK -> skip next instruction if Vx == kk
             0x3 => {
                 let x = (self.opcode & 0x0F00) >> 8;
@@ -91,7 +88,6 @@ impl CPU {
                 }
                 self.increment_program_counter();
             }
-
             // 0x4XKK -> skip next instruction if Vx != kk
             0x4 => {
                 let x = (self.opcode & 0x0F00) >> 8;
@@ -100,7 +96,6 @@ impl CPU {
                 }
                 self.increment_program_counter();
             }
-
             // 0x5XY0 -> skip next instruction if Vx == Vy
             0x5 => {
                 let x = (self.opcode & 0x0F00) >> 8;
@@ -110,14 +105,12 @@ impl CPU {
                 }
                 self.increment_program_counter();
             }
-
             // 0x6XKK -> set Vx = kk
             0x6 => {
                 let x = (self.opcode & 0x0F00) >> 8;
                 self.register[x as usize] = (self.opcode & 0x00FF) as u8;
                 self.increment_program_counter();
             }
-
             // 0x7XKK -> set Vx = Vx + kk
             0x7 => {
                 let x = (self.opcode & 0x0F00) >> 8;
@@ -144,15 +137,44 @@ impl CPU {
                     1 => self.register[x as usize] |= self.register[y as usize],
                     2 => self.register[x as usize] &= self.register[y as usize],
                     3 => self.register[x as usize] ^= self.register[y as usize],
-
                     4 => {
                         let mut sum: u16 = self.register[x as usize] as u16;
                         sum += self.register[y as usize] as u16;
                         self.register[0xF] = if sum > 255 { 1 } else { 0 };
                         self.register[x as usize] = (sum & 0x00FF) as u8;
                     }
-
-                    5 => {}
+                    5 => {
+                        self.register[0xF] =
+                            if self.register[x as usize] > self.register[y as usize] {
+                                1
+                            } else {
+                                0
+                            };
+                        self.register[x as usize] -= self.register[y as usize];
+                    }
+                    6 => {
+                        self.register[0xF] = self.register[0xF] & 1u8;
+                        self.register[x as usize] >>= 1;
+                    }
+                    7 => {
+                        self.register[0xF] =
+                            if self.register[y as usize] > self.register[x as usize] {
+                                1
+                            } else {
+                                0
+                            };
+                        self.register[x as usize] =
+                            self.register[y as usize] - self.register[x as usize];
+                    }
+                    14 => {
+                        self.register[0xF] = if self.register[x as usize] & 0x80 != 0 {
+                            1
+                        } else {
+                            0
+                        };
+                        self.register[x as usize] <<= 1;
+                    }
+                    _ => panic!("error: unimplemented instruction!"),
                 }
 
                 self.increment_program_counter();
