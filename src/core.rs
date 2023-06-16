@@ -1,5 +1,6 @@
 use crate::utils::{CPU, FONTSET};
 
+use rand::random;
 use sdl2::EventPump;
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
 use std::thread::sleep;
@@ -117,7 +118,6 @@ impl CPU {
                 self.register[x as usize] += (self.opcode & 0x00FF) as u8;
                 self.increment_program_counter();
             }
-
             // 0x8XY0 -> set Vx = Vy
             // 0x8XY1 -> set Vx = Vx | Vy
             // 0x8XY2 -> set Vx = Vx & Vy
@@ -176,7 +176,31 @@ impl CPU {
                     }
                     _ => panic!("error: unimplemented instruction!"),
                 }
+                self.increment_program_counter();
+            }
+            // 0x9XY0 -> skip next instruction if Vx != Vy
+            0x9 => {
+                let x = self.opcode & 0x0F00 >> 8;
+                let y = self.opcode & 0x00F0 >> 4;
 
+                if self.register[x as usize] != self.register[y as usize] {
+                    self.increment_program_counter();
+                }
+                self.increment_program_counter();
+            }
+            // 0xANNN -> set index = NNN
+            0xA => {
+                self.index_register = self.opcode & 0x0FFF;
+                self.increment_program_counter();
+            }
+            // 0xBNNN -> jump to location NNN
+            0xB => self.program_counter = self.opcode & 0x0FFF + self.register[0] as u16,
+            // 0xCXKK -> set Vx = RND & kk
+            0xC => {
+                let x = self.opcode & 0x0F00 >> 8;
+                let kk = self.opcode & 0x00FF;
+
+                self.register[x as usize] = random::<u8>() & kk as u8;
                 self.increment_program_counter();
             }
         }
