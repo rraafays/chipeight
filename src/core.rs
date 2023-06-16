@@ -203,6 +203,16 @@ impl CPU {
                 self.register[x as usize] = random::<u8>() & kk as u8;
                 self.increment_program_counter();
             }
+            // 0xDXYN -> display n byte sprite starting at memory location I at location Vx, Vy
+            0xD => {
+                self.register[0xF] = 0;
+                let x = self.opcode & 0x0F00 >> 8;
+                let y = self.opcode & 0x00F0 >> 4;
+                let n = self.opcode & 0x000F;
+
+                let vx = self.register[x as usize];
+                let vy = self.register[y as usize];
+            }
         }
     }
 
