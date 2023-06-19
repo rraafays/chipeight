@@ -153,7 +153,7 @@ impl CPU {
                         self.register[x as usize] -= self.register[y as usize];
                     }
                     6 => {
-                        self.register[0xF] = self.register[0xF] & 1u8;
+                        self.register[0xF] = self.register[x as usize] & 1u8;
                         self.register[x as usize] >>= 1;
                     }
                     7 => {
@@ -212,6 +212,17 @@ impl CPU {
 
                 let vx = self.register[x as usize];
                 let vy = self.register[y as usize];
+
+                let mut dy = 0;
+                while dy < n {
+                    let pixel = self.memory[(self.index_register + dy) as usize];
+                    dy += 1;
+                    let mut dx = 0;
+                    while dx < 8 {
+                        const MOST_SIGNIFICANT_BIT: u8 = 0x80;
+                        dx += 1;
+                    }
+                }
             }
         }
     }
