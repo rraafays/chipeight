@@ -253,6 +253,7 @@ impl CPU {
                 }
                 self.increment_program_counter();
             }
+            _ => panic!("not implemented!"),
         }
     }
 
