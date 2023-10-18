@@ -1,6 +1,5 @@
 #[allow(dead_code)]
-#[cfg_attr(rustfmt, rustfmt_skip)]
-pub const FONTSET: [u8; 80] = [ //u8,
+pub const FONTSET: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -11,7 +10,6 @@ pub const FONTSET: [u8; 80] = [ //u8,
     0xF0, 0x10, 0x20, 0x40, 0x40, // 7
     0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
     0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
-
     0xF0, 0x90, 0xF0, 0x90, 0x90, // A
     0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
     0xF0, 0x80, 0x80, 0x80, 0xF0, // C
@@ -22,19 +20,19 @@ pub const FONTSET: [u8; 80] = [ //u8,
 
 #[derive(Debug, Copy, Clone)]
 pub struct CPU {
-  pub opcode: u16,
-  pub memory: [u8; 4096],
-  pub graphics: [u8; 64 * 32],
+    pub opcode: u16,
+    pub memory: [u8; 4096],
+    pub graphics: [u8; 64 * 32],
 
-  pub register: [u8; 16],
-  pub index_register: u16,
-  pub program_counter: u16,
+    pub register: [u8; 16],
+    pub index_register: u16,
+    pub program_counter: u16,
 
-  pub delay_timer: u8,
-  pub sound_timer: u8,
+    pub delay_timer: u8,
+    pub sound_timer: u8,
 
-  pub stack: [u16; 16],
-  pub stack_pointer: u16,
+    pub stack: [u16; 16],
+    pub stack_pointer: u16,
 
-  pub keys: [u8; 16],
+    pub keys: [u8; 16],
 }
