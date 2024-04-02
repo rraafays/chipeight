@@ -5,5 +5,6 @@ pkgs.mkShell {
     rustc
     rust-analyzer
     rustfmt
+    SDL2
   ];
 }
