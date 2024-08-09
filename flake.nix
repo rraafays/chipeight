@@ -17,6 +17,7 @@
               rustc
               rustfmt
               rust-analyzer
+              SDL2
             ] ++ lib.optional stdenv.isDarwin libiconv;
           };
         }
