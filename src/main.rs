@@ -1,6 +1,11 @@
 use std::time::Duration;
 
-use sdl2::{event::Event, keyboard::Keycode, pixels::Color, video::Window};
+use sdl2::{
+    event::Event,
+    keyboard::Keycode,
+    pixels::Color,
+    video::Window,
+};
 
 fn main() {
     let sdl = sdl2::init().unwrap();
